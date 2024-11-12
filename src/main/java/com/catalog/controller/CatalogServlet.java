@@ -44,7 +44,7 @@ public class CatalogServlet extends HttpServlet{
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
 					RequestDispatcher failureView = req
-							.getRequestDispatcher("/member/select.jsp");
+							.getRequestDispatcher("/back-end/member/select.jsp");
 					failureView.forward(req, res);
 					return;//程式中斷
 				}
@@ -58,7 +58,7 @@ public class CatalogServlet extends HttpServlet{
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
 					RequestDispatcher failureView = req
-							.getRequestDispatcher("/member/select.jsp");
+							.getRequestDispatcher("/back-end/member/select.jsp");
 					failureView.forward(req, res);
 					return;//程式中斷
 				}
@@ -72,14 +72,14 @@ public class CatalogServlet extends HttpServlet{
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
 					RequestDispatcher failureView = req
-							.getRequestDispatcher("/member/select.jsp");
+							.getRequestDispatcher("/back-end/member/select.jsp");
 					failureView.forward(req, res);
 					return;//程式中斷
 				}
 				
 				/***************************3.查詢完成,準備轉交(Send the Success view)*************/
 				req.setAttribute("catalogVO", catalogVO); // 資料庫取出的empVO物件,存入req
-				String url = "/member/listAllEmp.jsp";
+				String url = "/back-end/member/listOneCatalog.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url); // 成功轉交 listOneEmp.jsp
 				successView.forward(req, res);
 		}
@@ -100,10 +100,10 @@ public class CatalogServlet extends HttpServlet{
 				CatalogVO catalogVO = catalogSvc.getOneCatalog(id);
 								
 				/***************************3.查詢完成,準備轉交(Send the Success view)************/
-//				req.setAttribute("catalogVO", catalogVO);         // 資料庫取出的catalogVO物件,存入req
-//				String url = "/member/update_emp_input.jsp";
-//				RequestDispatcher successView = req.getRequestDispatcher(url);// 成功轉交 update_emp_input.jsp
-//				successView.forward(req, res);
+				req.setAttribute("catalogVO", catalogVO);         // 資料庫取出的catalogVO物件,存入req
+				String url = "/back-end/member/update_catalog_input.jsp";
+				RequestDispatcher successView = req.getRequestDispatcher(url);// 成功轉交 update_emp_input.jsp
+				successView.forward(req, res);
 		}
 		
 		
@@ -115,72 +115,38 @@ public class CatalogServlet extends HttpServlet{
 			req.setAttribute("errorMsgs", errorMsgs);
 		
 				/***************************1.接收請求參數 - 輸入格式的錯誤處理**********************/
-				Integer empno = Integer.valueOf(req.getParameter("empno").trim());
+				Integer id = Integer.valueOf(req.getParameter("id").trim());
 				
-				String ename = req.getParameter("ename");
+				String name = req.getParameter("name");
 				String enameReg = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$";
-				if (ename == null || ename.trim().length() == 0) {
-					errorMsgs.add("員工姓名: 請勿空白");
-				} else if(!ename.trim().matches(enameReg)) { //以下練習正則(規)表示式(regular-expression)
-					errorMsgs.add("員工姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間");
+				if (name == null || name.trim().length() == 0) {
+					errorMsgs.add("類別名稱：請勿空白");
+				} else if(!name.trim().matches(enameReg)) { //以下練習正則(規)表示式(regular-expression)
+					errorMsgs.add("類別名稱：只能是中、英文字母、數字和_ , 且長度必需在2到10之間");
 	            }
-				
-				String job = req.getParameter("job").trim();
-				if (job == null || job.trim().length() == 0) {
-					errorMsgs.add("職位請勿空白");
-				}	
-				
-				java.sql.Date hiredate = null;
-				try {
-					hiredate = java.sql.Date.valueOf(req.getParameter("hiredate").trim());
-				} catch (IllegalArgumentException e) {
-					hiredate=new java.sql.Date(System.currentTimeMillis());
-					errorMsgs.add("請輸入日期!");
-				}
+					
 
-				Double sal = null;
-				try {
-					sal = Double.valueOf(req.getParameter("sal").trim());
-				} catch (NumberFormatException e) {
-					sal = 0.0;
-					errorMsgs.add("薪水請填數字.");
-				}
 
-				Double comm = null;
-				try {
-					comm = Double.valueOf(req.getParameter("comm").trim());
-				} catch (NumberFormatException e) {
-					comm = 0.0;
-					errorMsgs.add("獎金請填數字.");
-				}
-
-				Integer deptno = Integer.valueOf(req.getParameter("deptno").trim());
-
-				EmpVO empVO = new EmpVO();
-				empVO.setEmpno(empno);
-				empVO.setEname(ename);
-				empVO.setJob(job);
-				empVO.setHiredate(hiredate);
-				empVO.setSal(sal);
-				empVO.setComm(comm);
-				empVO.setDeptno(deptno);
+				CatalogVO catalogVO = new CatalogVO();
+				catalogVO.setId(id);
+				catalogVO.setName(name);
 
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
-req.setAttribute("empVO", empVO); // 含有輸入格式錯誤的empVO物件,也存入req
+req.setAttribute("catalogVO", catalogVO); // 含有輸入格式錯誤的empVO物件,也存入req
 					RequestDispatcher failureView = req
-							.getRequestDispatcher("/emp/update_emp_input.jsp");
+							.getRequestDispatcher("/back-end/member/update_catalog_input.jsp");
 					failureView.forward(req, res);
 					return; //程式中斷
 				}
 				
 				/***************************2.開始修改資料*****************************************/
-				EmpService empSvc = new EmpService();
-				empVO = empSvc.updateEmp(empno, ename, job, hiredate, sal, comm, deptno);
+				CatalogService catalogSvc = new CatalogService();
+				catalogVO = catalogSvc.updateCatalog(id, name);
 				
 				/***************************3.修改完成,準備轉交(Send the Success view)*************/
-				req.setAttribute("empVO", empVO); // 資料庫update成功後,正確的的empVO物件,存入req
-				String url = "/emp/listOneEmp.jsp";
+				req.setAttribute("catalogVO", catalogVO); // 資料庫update成功後,正確的的empVO物件,存入req
+				String url = "/back-end/member/listOneCatalog.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url); // 修改成功後,轉交listOneEmp.jsp
 				successView.forward(req, res);
 		}
@@ -193,68 +159,34 @@ req.setAttribute("empVO", empVO); // 含有輸入格式錯誤的empVO物件,也�
 			req.setAttribute("errorMsgs", errorMsgs);
 
 				/***********************1.接收請求參數 - 輸入格式的錯誤處理*************************/
-				String ename = req.getParameter("ename");
-				String enameReg = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$";
-				if (ename == null || ename.trim().length() == 0) {
+				String name = req.getParameter("name");
+				String nameReg = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$";
+				if (name == null || name.trim().length() == 0) {
 					errorMsgs.add("員工姓名: 請勿空白");
-				} else if(!ename.trim().matches(enameReg)) { //以下練習正則(規)表示式(regular-expression)
+				} else if(!name.trim().matches(nameReg)) { //以下練習正則(規)表示式(regular-expression)
 					errorMsgs.add("員工姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間");
 	            }
 				
-				String job = req.getParameter("job").trim();
-				if (job == null || job.trim().length() == 0) {
-					errorMsgs.add("職位請勿空白");
-				}
+	
 				
-				java.sql.Date hiredate = null;
-				try {
-					hiredate = java.sql.Date.valueOf(req.getParameter("hiredate").trim());
-				} catch (IllegalArgumentException e) {
-					hiredate=new java.sql.Date(System.currentTimeMillis());
-					errorMsgs.add("請輸入日期!");
-				}
-				
-				Double sal = null;
-				try {
-					sal = Double.valueOf(req.getParameter("sal").trim());
-				} catch (NumberFormatException e) {
-					sal = 0.0;
-					errorMsgs.add("薪水請填數字.");
-				}
-				
-				Double comm = null;
-				try {
-					comm = Double.valueOf(req.getParameter("comm").trim());
-				} catch (NumberFormatException e) {
-					comm = 0.0;
-					errorMsgs.add("獎金請填數字.");
-				}
-				
-				Integer deptno = Integer.valueOf(req.getParameter("deptno").trim());
-
-				EmpVO empVO = new EmpVO();
-				empVO.setEname(ename);
-				empVO.setJob(job);
-				empVO.setHiredate(hiredate);
-				empVO.setSal(sal);
-				empVO.setComm(comm);
-				empVO.setDeptno(deptno);
+				CatalogVO catalogVO = new CatalogVO();
+				catalogVO.setName(name);
 
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
-req.setAttribute("empVO", empVO); // 含有輸入格式錯誤的empVO物件,也存入req
+req.setAttribute("catalogVO", catalogVO); // 含有輸入格式錯誤的empVO物件,也存入req
 					RequestDispatcher failureView = req
-							.getRequestDispatcher("/emp/addEmp.jsp");
+							.getRequestDispatcher("/back-end/member/addCatalog.jsp");
 					failureView.forward(req, res);
 					return;
 				}
 				
 				/***************************2.開始新增資料***************************************/
-				EmpService empSvc = new EmpService();
-				empVO = empSvc.addEmp(ename, job, hiredate, sal, comm, deptno);
+				CatalogService catalogSvc = new CatalogService();
+				catalogVO = catalogSvc.addCatalog(name);
 				
 				/***************************3.新增完成,準備轉交(Send the Success view)***********/
-				String url = "/emp/listAllEmp.jsp";
+				String url = "/back-end/member/listAll.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url); // 新增成功後轉交listAllEmp.jsp
 				successView.forward(req, res);				
 		}
@@ -268,14 +200,14 @@ req.setAttribute("empVO", empVO); // 含有輸入格式錯誤的empVO物件,也�
 			req.setAttribute("errorMsgs", errorMsgs);
 	
 				/***************************1.接收請求參數***************************************/
-				Integer empno = Integer.valueOf(req.getParameter("empno"));
+				Integer id = Integer.valueOf(req.getParameter("id"));
 				
 				/***************************2.開始刪除資料***************************************/
-				EmpService empSvc = new EmpService();
-				empSvc.deleteEmp(empno);
+				CatalogService catalogSvc = new CatalogService();
+				catalogSvc.deleteCatalog(id);
 				
 				/***************************3.刪除完成,準備轉交(Send the Success view)***********/								
-				String url = "/emp/listAllEmp.jsp";
+				String url = "/back-end/member/listAll.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url);// 刪除成功後,轉交回送出刪除的來源網頁
 				successView.forward(req, res);
 		}

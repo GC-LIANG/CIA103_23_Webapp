@@ -9,4 +9,15 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+  
+    <!-- 添加你的 Servlet -->
+  <servlet>
+    <servlet-name>CatalogServlet</servlet-name>
+    <servlet-class>com.catalog.controller.CatalogServlet</servlet-class>
+  </servlet>
+  
+    <servlet-mapping>
+    <servlet-name>CatalogServlet</servlet-name>
+    <url-pattern>/emp/emp.do</url-pattern>
+  </servlet-mapping>
 </web-app>

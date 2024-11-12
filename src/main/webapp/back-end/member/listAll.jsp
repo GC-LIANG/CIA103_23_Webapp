@@ -71,13 +71,13 @@
 			<td>${catalogVO.id}</td>
 			<td>${catalogVO.name}</td>
 			<td>
-			  <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/catalog/catalog.do" style="margin-bottom: 0px;">
+			  <FORM METHOD="post" ACTION="<%= request.getContextPath() %>/emp/emp.do"" style="margin-bottom: 0px;">
 			     <input type="submit" value="­×§ï">
 			     <input type="hidden" name="id"  value="${catalogVO.id}">
 			     <input type="hidden" name="action"	value="getOne_For_Update"></FORM>
 			</td>
 			<td>
-			  <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/catalog/catalog.do" style="margin-bottom: 0px;">
+			  <FORM METHOD="post" ACTION="<%= request.getContextPath() %>/emp/emp.do"" style="margin-bottom: 0px;">
 			     <input type="submit" value="§R°£">
 			     <input type="hidden" name="id"  value="${catalogVO.id}">
 			     <input type="hidden" name="action" value="delete"></FORM>

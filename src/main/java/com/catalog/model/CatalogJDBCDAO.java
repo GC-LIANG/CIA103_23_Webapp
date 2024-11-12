@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.Statement;
 public class CatalogJDBCDAO implements CatalogDAO_interface {
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/fakeDataTest?serverTimezone=Asia/Taipei";
@@ -15,7 +16,7 @@ public class CatalogJDBCDAO implements CatalogDAO_interface {
 	String passwd = "eric19991003";
 
 	private static final String INSERT_STMT = 
-		"INSERT INTO prd_catalog (id,name) VALUES (?, ?)";
+		"INSERT INTO prd_catalog (name) VALUES (?)";
 	private static final String GET_ALL_STMT = 
 		"SELECT id,name FROM prd_catalog order by id";
 	private static final String GET_ONE_STMT = 
@@ -23,7 +24,7 @@ public class CatalogJDBCDAO implements CatalogDAO_interface {
 	private static final String DELETE = 
 		"DELETE FROM prd_catalog where id = ?";
 	private static final String UPDATE = 
-		"UPDATE prd_catalog set id=?, name=? where id = ?";
+		"UPDATE prd_catalog set name=? where id = ?";
 	
 	public void insert(CatalogVO catalogVO) {
 		
@@ -33,12 +34,18 @@ public class CatalogJDBCDAO implements CatalogDAO_interface {
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
-			pstmt = con.prepareStatement(INSERT_STMT);
+			pstmt = con.prepareStatement(INSERT_STMT, Statement.RETURN_GENERATED_KEYS);
 			
-			pstmt.setInt(1, catalogVO.getId());
-			pstmt.setString(2, catalogVO.getName());
+//			pstmt.setInt(1, catalogVO.getId());
+			pstmt.setString(1, catalogVO.getName());
 			
 			pstmt.executeUpdate();
+			
+			try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+	            if (generatedKeys.next()) {
+	                catalogVO.setId(generatedKeys.getInt(1));  // 设置生成的 id
+	            }
+	        }
 		} catch (SQLException se) {
 			throw new RuntimeException("A database error occured. " + se.getMessage());
 			// Handle any driver errors
@@ -74,8 +81,8 @@ public class CatalogJDBCDAO implements CatalogDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(UPDATE);
 			
-			pstmt.setInt(1, catalogVO.getId());
-			pstmt.setString(2, catalogVO.getName());
+			pstmt.setString(1, catalogVO.getName());
+			pstmt.setInt(2, catalogVO.getId());
 			
 			pstmt.executeUpdate();
 		}catch (ClassNotFoundException e) {

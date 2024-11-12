@@ -51,6 +51,51 @@
 
 <ul>
   <li><a href='listAll.jsp'>List</a> all catalogs.  <br><br></li>
+  
+     <li>
+    <FORM METHOD="post" ACTION="<%= request.getContextPath() %>/emp/emp.do" >
+        <b>輸入類別編號：</b>
+        <input type="text" name="id">
+        <input type="hidden" name="action" value="getOne_For_Display">
+        <input type="submit" value="送出">
+    </FORM>
+  </li>
+  
+  <jsp:useBean id="catalogSvc" scope="page" class="com.catalog.model.CatalogService" />
+  
+     <li>
+     <FORM METHOD="post" ACTION="<%= request.getContextPath() %>/emp/emp.do" >
+       <b>選擇類別編號：</b>
+       <select size="1" name="id">
+         <c:forEach var="catalogVO" items="${catalogSvc.all}" > 
+          <option value="${catalogVO.id}">${catalogVO.id}
+         </c:forEach>   
+       </select>
+       <input type="hidden" name="action" value="getOne_For_Display">
+       <input type="submit" value="送出">
+     </FORM>
+     </li> 
+     
+     <li>
+     <FORM METHOD="post" ACTION="<%= request.getContextPath() %>/emp/emp.do" >
+       <b>選擇類別名稱：</b>
+       <select size="1" name="id">
+         <c:forEach var="catalogVO" items="${catalogSvc.all}" > 
+          <option value="${catalogVO.id}">${catalogVO.name}
+         </c:forEach>   
+       </select>
+       <input type="hidden" name="action" value="getOne_For_Display">
+       <input type="submit" value="送出">
+     </FORM>
+     </li>
+  
+  </ul>
+  
+  <h3>商品類別管理</h3>
+  
+   <ul>
+  <li><a href='addCatalog.jsp'>Add</a> a new Catalog.</li>
+  </ul>  
 
 
 </body>
